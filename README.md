@@ -82,3 +82,5 @@ static void rc522_task(void* arg)
 ### Pruebas
 
 En las pruebas realizada la librería funciona bien y obtiene el ID de la tarjeta correctamente.
+
+
