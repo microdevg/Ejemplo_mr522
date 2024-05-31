@@ -8,7 +8,7 @@ En la configuración por defecto usamos el puerto SPI3 con los siguientes pines:
 
 rc522_config_t config = {
     .spi.host = VSPI_HOST,
-    .spi.miso_gpio = 25,
+    .spi.miso_gpio = 21,
     .spi.mosi_gpio = 23, 
     .spi.sck_gpio = 19,
     .spi.sda_gpio = 22,
