@@ -8,7 +8,7 @@
 #include "rc522_registers.h"
 #include "guards.h"
 
-static const char* TAG = "rc522";
+static const char* TAG = "[rc522]";
 
 /**
  * @brief Macro for safely freeing memory.
@@ -32,6 +32,44 @@ struct rc522 {
     bool tag_was_present_last_time;
     bool bus_initialized_by_user;          /*<! Whether the bus has been initialized manually by the user, before calling rc522_create function */
 };
+
+
+static rc522_handle_t scanner;
+static callback_RFID_t _get_RFID = NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Cuando detecto una tarjeta genero un evento que se procesa aqui
+// Es algo parecido a una interrupción por software (basado en eventos de FreeRTOS)
+static void rc522_handler(void* arg, esp_event_base_t base, int32_t event_id, void* event_data)
+{
+    rc522_event_data_t* data = (rc522_event_data_t*) event_data;
+
+    switch(event_id) {
+        case RC522_EVENT_TAG_SCANNED: {
+                rc522_tag_t* tag = (rc522_tag_t*) data->ptr;
+              //  if(_get_RFID)_get_RFID(tag->serial_number);
+
+                ESP_LOGI(TAG, "Tag scanned (sn: %" PRIu64 ")", tag->serial_number);
+                if(_get_RFID)_get_RFID(tag->serial_number);
+            }
+            break;
+    }
+}
+
+
+
+
 
 ESP_EVENT_DEFINE_BASE(RC522_EVENTS);
 
@@ -698,4 +736,19 @@ static void rc522_task(void* arg)
     }
 
     vTaskDelete(NULL);
+}
+
+
+
+
+esp_err_t rc522_init(rc522_config_t* config,callback_RFID_t get_rfid){
+
+// Almaceno el callback
+ _get_RFID = get_rfid;
+
+ rc522_create(config, &scanner);
+ rc522_register_events(scanner, RC522_EVENT_ANY, rc522_handler, NULL);
+ rc522_start(scanner);
+
+    return 0;   
 }

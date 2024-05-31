@@ -4,10 +4,9 @@
 extern "C" {
 #endif
 
-#include <esp_event.h>
-#include <driver/spi_master.h>
-#include <driver/i2c.h> // TODO: Log warning: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
 
+#include <driver/spi_master.h>
+#include "base.h"
 //#define RC522_I2C_ADDRESS (0x28)
 
 #define RC522_DEFAULT_SCAN_INTERVAL_MS (125)
@@ -103,6 +102,21 @@ esp_err_t rc522_pause(rc522_handle_t rc522);
  * @param rc522 Handle
  */
 esp_err_t rc522_destroy(rc522_handle_t rc522);
+
+
+
+
+
+
+/**
+ * @brief Configuración rápida del modulo , usa callback cuando recibe RFID (uint64_t )para ocultar implementación.
+ * 
+ * @param config    Puntero a la configuración del modulo.
+ * @param get_rfid  Función callback que recibe como parámetro el RFID (uint64_t).
+ * @return esp_err_t 
+ */
+esp_err_t rc522_init(rc522_config_t* config,callback_RFID_t get_rfid);
+
 
 #ifdef __cplusplus
 }
